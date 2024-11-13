@@ -73,12 +73,12 @@ La estructura del proyecto está organizada de manera modular, separando las dif
 
 1. Clona el repositorio:
    ```bash
-   git clone https://github.com/tu-usuario/tu-repositorio.git
+   git clone https://github.com/nrb3098/ProyectoVictimasAPE.git
    ```
 
 2. Accede al directorio del proyecto:
    ```bash
-   cd tu-repositorio
+   cd ProyectoVictimasAPE
    ```
 
 3. Instala las dependencias:
