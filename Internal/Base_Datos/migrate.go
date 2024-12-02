@@ -6,10 +6,20 @@ import (
 )
 
 func init() {
-	initializers.ConnectToDB()
 	initializers.LoadEnvVariables()
+	initializers.ConnectToDB()
 }
 
 func main() {
-	initializers.DB.AutoMigrate(&models.Orientacion{})
+	// Migrar las tablas
+	initializers.DB.AutoMigrate(
+		&models.RUVVictimaLite{},
+		&models.Colocado{},
+		&models.Inscrito{},
+		&models.Orientacion{},
+		&models.Municipio{},
+		&models.Regional{},
+		&models.Meta{},
+	)
+
 }
