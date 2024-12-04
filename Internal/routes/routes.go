@@ -18,5 +18,8 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 		api.GET("/metas/:id", metaController.GetMetaByID)
 		api.PUT("/metas/:id", metaController.UpdateMeta)
 		api.DELETE("/metas/:id", metaController.DeleteMeta)
+		
+		// Ruta para obtener totales
+		api.GET("/totales", metaController.GetTotales)
 	}
 }

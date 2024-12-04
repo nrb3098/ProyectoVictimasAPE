@@ -85,3 +85,36 @@ func (mc *MetaController) DeleteMeta(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Meta eliminada correctamente"})
 }
+
+
+// Obtener el total de registros por tabla
+func (mc *MetaController) GetTotales(c *gin.Context) {
+	var totalInscritos int64
+	var totalColocados int64
+	var totalOrientados int64
+
+	// Contar el total de inscritos
+	if err := cc.DB.Table("Inscritos").Count(&totalInscritos).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al contar los registros de Inscritos"})
+		return
+	}
+
+	// Contar el total de colocados
+	if err := cc.DB.Table("Colocados").Count(&totalColocados).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al contar los registros de Colocados"})
+		return
+	}
+
+	// Contar el total de orientados
+	if err := cc.DB.Table("Orientados").Count(&totalOrientados).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al contar los registros de Orientados"})
+		return
+	}
+
+	// Respuesta con los totales
+	c.JSON(http.StatusOK, gin.H{
+		"total_inscritos": totalInscritos,
+		"total_colocados": totalColocados,
+		"total_orientados": totalOrientados,
+	})
+}
