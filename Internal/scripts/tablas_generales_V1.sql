@@ -1,7 +1,7 @@
 -- Creación de tablas principales
 CREATE TABLE Regional (
-    ID INT PRIMARY KEY AUTO_INCREMENT,
-    REG_NOMBRE VARCHAR(100) NOT NULL
+    ID INT primary KEY AUTO_INCREMENT,
+    REG_NOMBRE VARCHAR(100) not NULL
 );
 
 CREATE TABLE Municipios (
@@ -117,7 +117,7 @@ CREATE TABLE RUV_Victimas_LITE (
 
 -- Inserción de datos mock
 -- 1. Regional
-INSERT INTO Regional (REG_NOMBRE) VALUES 
+INSERT INTO Regionals (Regional_NOMBRE) VALUES 
 ('Regional Centro'),
 ('Regional Norte'),
 ('Regional Sur'),
@@ -125,7 +125,7 @@ INSERT INTO Regional (REG_NOMBRE) VALUES
 ('Regional Occidente');
 
 -- 2. Municipios
-INSERT INTO Municipios (MPO_NOMBRE) VALUES 
+INSERT INTO Municipios (Municipio_NOMBRE) VALUES 
 ('Bogotá'),
 ('Medellín'),
 ('Cali'),
@@ -144,8 +144,8 @@ INSERT INTO Municipios (MPO_NOMBRE) VALUES
 
 -- 3. Metas
 INSERT INTO Metas (Nombre_meta, Cifra_meta, Regional_ID, Fecha_inicio, Fecha_corte) VALUES
-('Meta 1', 1000, 1, '2024-01-01', '2024-12-31'),
-('Meta 2', 2000, 2, '2024-01-01', '2024-12-31'),
+('Nacional', 1000, 1, '2024-01-01', '2024-12-31'),
+('', 2000, 2, '2024-01-01', '2024-12-31'),
 ('Meta 3', 1500, 3, '2024-01-01', '2024-12-31'),
 ('Meta 4', 1800, 4, '2024-01-01', '2024-12-31'),
 ('Meta 5', 1200, 5, '2024-01-01', '2024-12-31');

@@ -1,0 +1,99 @@
+services:
+  #postgres:
+  #  # env_file: ./.env
+  #  image: postgres:16
+  #  container_name: postgres_ruv
+  #  environment:
+  #    POSTGRES_DB: ${DB_NAME}
+  #    POSTGRES_USER: ${DB_USER}
+  #    POSTGRES_PASSWORD: ${DB_PASSWORD}
+  #  ports:
+  #    - "${DB_PORT}:5432"
+  #  volumes:
+  #    - postgres_data:/var/lib/postgresql/data
+  #    - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+  #  healthcheck:
+  #    test: ["CMD-SHELL", "pg_isready -U admin -d db_ruv"]
+  #    interval: 10s
+  #    timeout: 5s
+  #    retries: 5
+  #  networks:
+  #    - ruv-network
+
+  # auth-service:
+  #   env_file: ./AuthGoAPI/.env
+  #   build:
+  #     context: ./AuthGoAPI
+  #     dockerfile: ../.docker/auth/Dockerfile
+  #   container_name: auth_service
+  #   ports:
+  #     - "8080:8080"
+
+     
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   networks:
+  #     - ruv-network
+
+  # search-service:
+  #   env_file: ./API-searchByDocument/.env
+  #   build:
+  #     context: ./API-searchByDocument
+  #     dockerfile: ../.docker/search/Dockerfile
+  #     target: dev
+  #   container_name: search_service
+  #   ports:
+  #     - "8082:8082"
+  #   volumes:
+  #     - ./API-searchByDocument:/app
+    
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   networks:
+  #     - ruv-network
+
+
+  api-oracle-service:
+    # env_file: ./API-searchByDocument/.env
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+      # target: dev
+    container_name: api-oracle-service
+    ports:
+      - "8083:8083"
+    # volumes:
+    #   - ./API-searchByDocument:/app
+    
+
+    networks:
+      - ruv-network
+
+  #upload-file-service:
+  #  env_file:
+  #    - ./UploadFile/.env
+  #  build:
+  #    context: ./UploadFile
+  #    dockerfile: ../.docker/upload/Dockerfile
+  #  container_name: upload-file-service
+  #  ports:
+  #    - "8081:8081"
+  #  depends_on:
+  #    postgres:
+  #      condition: service_healthy
+  #  
+  #
+  #  
+  #  networks:
+  #    - ruv-network     
+
+
+
+networks:
+  ruv-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
