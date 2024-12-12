@@ -1,15 +1,33 @@
 package controllers
 
 import (
+	"database/sql"
 	"net/http"
 	models "proyectoAPE/Internal/Models"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/godror/godror"
 	"gorm.io/gorm"
 )
 
 type MetaController struct {
-	DB *gorm.DB
+	DB     *gorm.DB
+	DB_ape *sql.DB
+}
+
+type Orientacion struct {
+	ID                      uint   `gorm:"primaryKey" json:"id"`
+	FechaPrimeraOrientacion string `gorm:"size:30" json:"fecha_primera_orientacion"`
+}
+
+type MonthlyCount struct {
+	YearMonth string `json:"year_month"`
+	Count     int    `json:"count"`
+}
+type RespuestaGrafico struct {
+	Orientciones []MonthlyCount `json:"orientaciones"`
+	Colocaciones []MonthlyCount `json:"colocados"`
+	Inscritos    []MonthlyCount `json:"inscritos"`
 }
 
 // Crear una nueva meta
@@ -86,35 +104,118 @@ func (mc *MetaController) DeleteMeta(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Meta eliminada correctamente"})
 }
 
-
-// Obtener el total de registros por tabla
 func (mc *MetaController) GetTotales(c *gin.Context) {
+
 	var totalInscritos int64
 	var totalColocados int64
 	var totalOrientados int64
+	var Metas []models.Meta
 
 	// Contar el total de inscritos
-	if err := cc.DB.Table("Inscritos").Count(&totalInscritos).Error; err != nil {
+	if err := mc.DB.Table("Inscritos").Count(&totalInscritos).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al contar los registros de Inscritos"})
 		return
 	}
 
 	// Contar el total de colocados
-	if err := cc.DB.Table("Colocados").Count(&totalColocados).Error; err != nil {
+	if err := mc.DB.Table("Colocados").Count(&totalColocados).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al contar los registros de Colocados"})
 		return
 	}
 
 	// Contar el total de orientados
-	if err := cc.DB.Table("Orientados").Count(&totalOrientados).Error; err != nil {
+	if err := mc.DB.Table("Orientaciones").Count(&totalOrientados).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al contar los registros de Orientados"})
 		return
 	}
 
+	if err := mc.DB.Table("Orientaciones").Count(&totalOrientados).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al contar los registros de Orientados"})
+		return
+	}
+
+	//traer todas las metas.
+	if err := mc.DB.Find(&Metas).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al traer las metas"})
+		return
+	}
 	// Respuesta con los totales
 	c.JSON(http.StatusOK, gin.H{
-		"total_inscritos": totalInscritos,
-		"total_colocados": totalColocados,
+
+		"total_inscritos":  totalInscritos,
+		"total_colocados":  totalColocados,
 		"total_orientados": totalOrientados,
+		"Metas":            Metas,
 	})
+
+}
+
+func (mc *MetaController) GetMetasxMes(c *gin.Context) {
+	var results RespuestaGrafico
+	var resultOrientaciones []MonthlyCount
+	var resultColocados []MonthlyCount
+	var resultInscritos []MonthlyCount
+
+	err := mc.DB.Table("Orientaciones").
+		Select("TO_CHAR(TO_DATE(fecha_primera_orientacion, 'YYYY-MM-DD'), 'YYYY-MM') AS year_month, COUNT(*) AS count").
+		Group("year_month").
+		Order("year_month").
+		Scan(&resultOrientaciones).Error
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	err1 := mc.DB.Table("Colocados").
+		Select("TO_CHAR(TO_DATE(fecha_colocacion, 'YYYY-MM-DD'), 'YYYY-MM') AS year_month, COUNT(*) AS count").
+		Group("year_month").
+		Order("year_month").
+		Scan(&resultColocados).Error
+
+	if err1 != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err1.Error()})
+		return
+	}
+
+	err2 := mc.DB.Table("Inscritos").
+		Select("TO_CHAR(TO_DATE(fecha_inscripcion, 'YYYY-MM-DD'), 'YYYY-MM') AS year_month, COUNT(*) AS count").
+		Group("year_month").
+		Order("year_month").
+		Scan(&resultInscritos).Error
+
+	if err2 != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err2.Error()})
+		return
+	}
+
+	results.Colocaciones = resultColocados
+	results.Orientciones = resultOrientaciones
+	results.Inscritos = resultInscritos
+
+	c.JSON(http.StatusOK, results)
+}
+
+func (mc *MetaController) GetMetasxTrimestre(c *gin.Context) {
+
+	var results []struct {
+		YearQuarter string `json:"year_quarter"`
+		Count       int    `json:"count"`
+	}
+
+	err := mc.DB.Table("Orientaciones").
+		Select(`
+            CONCAT(EXTRACT(YEAR FROM TO_DATE(fecha_primera_orientacion, 'YYYY-MM-DD')), '-Q', 
+                   EXTRACT(QUARTER FROM TO_DATE(fecha_primera_orientacion, 'YYYY-MM-DD'))) AS year_quarter, 
+            COUNT(*) AS count`).
+		Group("year_quarter").
+		Order("year_quarter").
+		Scan(&results).Error
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, results)
 }
