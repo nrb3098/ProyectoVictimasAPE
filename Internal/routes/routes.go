@@ -22,8 +22,12 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB, db_ape *sql.DB) {
 
 		// Ruta para obtener totales
 		api.GET("/metas/totalMetas", metaController.GetTotales)
+		api.GET("/metas/ejecucionMensual", metaController.GetMetasxMes)
+		api.GET("/metas/ejecucionTrimestral", metaController.GetMetasxTrimestre)
 
-		//Ruta para mover los datos desde la APE
+		//Ruta para mover los datos desde la APE.
 		api.GET("/orientaciones/ejecucionMeta", orientacionesController.MoverDatosApeOrientaciones)
+		//Ruta para crear el csv del reporte.
+		api.GET("/orientaciones/exportarOrientaciones", orientacionesController.ExportarOrientacionesCSV)
 	}
 }

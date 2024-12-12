@@ -46,3 +46,11 @@ type RUVVictimaLite struct {
 func (RUVVictimaLite) TableName() string {
 	return "RUV_Victimas_LITE"
 }
+
+// CSVRegistro representa la estructura de la tabla csv_registros
+type CSVRegistro struct {
+	ID            uint      `gorm:"primaryKey" json:"id"`
+	TipoArchivo   string    `gorm:"size:50;not null" json:"tipo_archivo"` // orientaciones, inscritos, colocados
+	RutaArchivo   string    `gorm:"not null" json:"ruta_archivo"`         // Ruta relativa del archivo
+	FechaCreacion time.Time `gorm:"autoCreateTime" json:"fecha_creacion"`
+}

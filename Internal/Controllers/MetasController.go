@@ -15,6 +15,16 @@ type MetaController struct {
 	DB_ape *sql.DB
 }
 
+type Orientacion struct {
+	ID                      uint   `gorm:"primaryKey" json:"id"`
+	FechaPrimeraOrientacion string `gorm:"size:30" json:"fecha_primera_orientacion"`
+}
+
+type MonthlyCount struct {
+	YearMonth string `json:"year_month"`
+	Count     int    `json:"count"`
+}
+
 // Crear una nueva meta
 func (mc *MetaController) CreateMeta(c *gin.Context) {
 	var meta models.Meta
@@ -133,4 +143,44 @@ func (mc *MetaController) GetTotales(c *gin.Context) {
 		"Metas":            Metas,
 	})
 
+}
+
+func (mc *MetaController) GetMetasxMes(c *gin.Context) {
+	var results []MonthlyCount
+	err := mc.DB.Table("Orientaciones").
+		Select("TO_CHAR(TO_DATE(fecha_primera_orientacion, 'YYYY-MM-DD'), 'YYYY-MM') AS year_month, COUNT(*) AS count").
+		Group("year_month").
+		Order("year_month").
+		Scan(&results).Error
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, results)
+}
+
+func (mc *MetaController) GetMetasxTrimestre(c *gin.Context) {
+
+	var results []struct {
+		YearQuarter string `json:"year_quarter"`
+		Count       int    `json:"count"`
+	}
+
+	err := mc.DB.Table("Orientaciones").
+		Select(`
+            CONCAT(EXTRACT(YEAR FROM TO_DATE(fecha_primera_orientacion, 'YYYY-MM-DD')), '-Q', 
+                   EXTRACT(QUARTER FROM TO_DATE(fecha_primera_orientacion, 'YYYY-MM-DD'))) AS year_quarter, 
+            COUNT(*) AS count`).
+		Group("year_quarter").
+		Order("year_quarter").
+		Scan(&results).Error
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, results)
 }
