@@ -24,6 +24,11 @@ type MonthlyCount struct {
 	YearMonth string `json:"year_month"`
 	Count     int    `json:"count"`
 }
+type RespuestaGrafico struct {
+	Orientciones []MonthlyCount `json:"orientaciones"`
+	Colocaciones []MonthlyCount `json:"colocados"`
+	Inscritos    []MonthlyCount `json:"inscritos"`
+}
 
 // Crear una nueva meta
 func (mc *MetaController) CreateMeta(c *gin.Context) {
@@ -146,17 +151,47 @@ func (mc *MetaController) GetTotales(c *gin.Context) {
 }
 
 func (mc *MetaController) GetMetasxMes(c *gin.Context) {
-	var results []MonthlyCount
+	var results RespuestaGrafico
+	var resultOrientaciones []MonthlyCount
+	var resultColocados []MonthlyCount
+	var resultInscritos []MonthlyCount
+
 	err := mc.DB.Table("Orientaciones").
 		Select("TO_CHAR(TO_DATE(fecha_primera_orientacion, 'YYYY-MM-DD'), 'YYYY-MM') AS year_month, COUNT(*) AS count").
 		Group("year_month").
 		Order("year_month").
-		Scan(&results).Error
+		Scan(&resultOrientaciones).Error
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
+	err1 := mc.DB.Table("Colocados").
+		Select("TO_CHAR(TO_DATE(fecha_colocacion, 'YYYY-MM-DD'), 'YYYY-MM') AS year_month, COUNT(*) AS count").
+		Group("year_month").
+		Order("year_month").
+		Scan(&resultColocados).Error
+
+	if err1 != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err1.Error()})
+		return
+	}
+
+	err2 := mc.DB.Table("Inscritos").
+		Select("TO_CHAR(TO_DATE(fecha_inscripcion, 'YYYY-MM-DD'), 'YYYY-MM') AS year_month, COUNT(*) AS count").
+		Group("year_month").
+		Order("year_month").
+		Scan(&resultInscritos).Error
+
+	if err2 != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err2.Error()})
+		return
+	}
+
+	results.Colocaciones = resultColocados
+	results.Orientciones = resultOrientaciones
+	results.Inscritos = resultInscritos
 
 	c.JSON(http.StatusOK, results)
 }
