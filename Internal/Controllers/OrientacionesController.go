@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	models "proyectoAPE/Internal/Models"
 	"time"
 
@@ -311,8 +312,15 @@ func (oc *OrientacionesController) ExportarOrientacionesCSV(c *gin.Context) {
 		return
 	}
 
+	// Asegurarse de que la carpeta ./csv/ exista
+	directorio := "./csv"
+	if err := os.MkdirAll(directorio, os.ModePerm); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "No se pudo crear el directorio para los archivos CSV"})
+		return
+	}
+
 	// Crear un archivo CSV
-	fileName := fmt.Sprintf("./csv/orientaciones_%s.csv", time.Now().Format("20060102_150405"))
+	fileName := filepath.Join(directorio, fmt.Sprintf("orientaciones_%s.csv", time.Now().Format("20060102_150405")))
 	file, err := os.Create(fileName)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "No se pudo crear el archivo CSV"})
@@ -378,6 +386,16 @@ func (oc *OrientacionesController) ExportarOrientacionesCSV(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "No se pudo escribir un registro en el archivo CSV"})
 			return
 		}
+	}
+
+	var registroArchivo models.CSVRegistro
+	registroArchivo.RutaArchivo = fileName
+	registroArchivo.TipoArchivo = "Orientados"
+	registroArchivo.FechaCreacion = time.Now()
+
+	if err := oc.DB.Create(&registroArchivo).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al crear la meta"})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{

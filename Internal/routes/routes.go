@@ -11,19 +11,20 @@ import (
 func RegisterRoutes(router *gin.Engine, db *gorm.DB, db_ape *sql.DB) {
 	metaController := controllers.MetaController{DB: db, DB_ape: db_ape}
 	orientacionesController := controllers.OrientacionesController{DB: db, DB_ape: db_ape}
+
 	api := router.Group("/api/v1")
 	{
-		// Rutas para metas
+		// CRUD para metas
 		api.POST("/metas", metaController.CreateMeta)
-		api.GET("/metas", metaController.GetMetas)
 		api.GET("/metas/:id", metaController.GetMetaByID)
 		api.PUT("/metas/:id", metaController.UpdateMeta)
 		api.DELETE("/metas/:id", metaController.DeleteMeta)
 
-		// Ruta para obtener totales
-		api.GET("/metas/totalMetas", metaController.GetTotales)
-		api.GET("/metas/ejecucionMensual", metaController.GetMetasxMes)
-		api.GET("/metas/ejecucionTrimestral", metaController.GetMetasxTrimestre)
+		// endpoints para dashboard
+		api.GET("/metas/ejecuciónAnual", metaController.GetTotales)              //Da el contador de los que van a la fecha
+		api.GET("/metas/ejecucionMensual", metaController.GetMetasxMes)          //Para notificaciones (solo orientaciones)
+		api.GET("/metas/ejecucionTrimestral", metaController.GetMetasxTrimestre) //Para notificaciones (solo orientaciones)
+		api.GET("/metas", metaController.GetMetas)                               //Entrega todas las metas para hacer el comparativo vs anual
 
 		//Ruta para mover los datos desde la APE.
 		api.GET("/orientaciones/ejecucionMeta", orientacionesController.MoverDatosApeOrientaciones)

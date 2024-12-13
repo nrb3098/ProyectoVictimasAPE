@@ -109,7 +109,6 @@ func (mc *MetaController) GetTotales(c *gin.Context) {
 	var totalInscritos int64
 	var totalColocados int64
 	var totalOrientados int64
-	var Metas []models.Meta
 
 	// Contar el total de inscritos
 	if err := mc.DB.Table("Inscritos").Count(&totalInscritos).Error; err != nil {
@@ -134,20 +133,13 @@ func (mc *MetaController) GetTotales(c *gin.Context) {
 		return
 	}
 
-	//traer todas las metas.
-	if err := mc.DB.Find(&Metas).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al traer las metas"})
-		return
-	}
 	// Respuesta con los totales
 	c.JSON(http.StatusOK, gin.H{
 
 		"total_inscritos":  totalInscritos,
 		"total_colocados":  totalColocados,
 		"total_orientados": totalOrientados,
-		"Metas":            Metas,
 	})
-
 }
 
 func (mc *MetaController) GetMetasxMes(c *gin.Context) {
