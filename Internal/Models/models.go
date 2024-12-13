@@ -54,3 +54,8 @@ type CSVRegistro struct {
 	RutaArchivo   string    `gorm:"not null" json:"ruta_archivo"`         // Ruta relativa del archivo
 	FechaCreacion time.Time `gorm:"autoCreateTime" json:"fecha_creacion"`
 }
+
+// TableName sobrescribe el nombre de la tabla para evitar pluralización
+func (CSVRegistro) TableName() string {
+	return "csv_registros"
+}
