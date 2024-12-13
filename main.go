@@ -1,8 +1,6 @@
 package main
 
 import (
-	"database/sql"
-	"log"
 	"proyectoAPE/Internal/routes"
 	"proyectoAPE/cmd/API/initializers"
 
@@ -19,19 +17,6 @@ func main() {
 	// Crear el servidor
 	router := gin.Default()
 
-	//conexión BD ape
-	dsn := `user="ape_replica" password="123456" connectString="0.0.0.0:1521/xe"`
-	DB_ape, err := sql.Open("godror", dsn)
-	if err != nil {
-		log.Fatalf("Error al conectar a la base de datos: %v", err)
-	}
-	defer DB_ape.Close()
-
-	if err = DB_ape.Ping(); err != nil {
-		log.Fatalf("No se pudo conectar con base de datos: %v", err)
-	}
-	log.Println("Conexión a la base de datos exitosa")
-
 	// Configuración CORS
 	corsConfig := cors.DefaultConfig()
 	corsConfig.AllowOrigins = []string{"http://localhost:5173"}
@@ -43,12 +28,8 @@ func main() {
 
 	router.Use(cors.New(corsConfig))
 
-	if DB_ape == nil {
-		log.Fatal("NULL")
-	}
-
 	// Registrar rutas
-	routes.RegisterRoutes(router, initializers.DB, DB_ape)
+	routes.RegisterRoutes(router, initializers.DB)
 
 	// Iniciar el servidor
 	router.Run() // listen and serve on 0.0.0.0:5010
