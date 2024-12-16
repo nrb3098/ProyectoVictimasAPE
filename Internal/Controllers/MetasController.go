@@ -111,7 +111,7 @@ func (mc *MetaController) GetTotales(c *gin.Context) {
 	var totalOrientados int64
 
 	// Contar el total de inscritos
-	if err := mc.DB.Table("Inscritos").Count(&totalInscritos).Error; err != nil {
+	if err := mc.DB.Table("inscritos").Count(&totalInscritos).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al contar los registros de Inscritos"})
 		return
 	}
