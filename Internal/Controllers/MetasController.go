@@ -209,5 +209,34 @@ func (mc *MetaController) GetMetasxTrimestre(c *gin.Context) {
 		return
 	}
 
+	if len(results) > 0 {
+		// Quedarse solo con el último registro
+		results = results[len(results)-1:]
+	}
+
 	c.JSON(http.StatusOK, results)
+}
+
+func (mc *MetaController) GetMetaxMes(c *gin.Context) {
+
+	var result MonthlyCount
+
+	err := mc.DB.Table("Orientaciones").
+		Select(`
+			TO_CHAR(TO_DATE(fecha_primera_orientacion, 'YYYY-MM-DD'), 'YYYY-MM') AS month, 
+			COUNT(*) AS count`).
+		Where(`
+			EXTRACT(YEAR FROM TO_DATE(fecha_primera_orientacion, 'YYYY-MM-DD')) = EXTRACT(YEAR FROM CURRENT_DATE) 
+			AND 
+			EXTRACT(MONTH FROM TO_DATE(fecha_primera_orientacion, 'YYYY-MM-DD')) = EXTRACT(MONTH FROM CURRENT_DATE)
+		`).
+		Group("month").
+		Scan(&result).Error
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
 }
