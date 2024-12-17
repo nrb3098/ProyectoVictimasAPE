@@ -40,6 +40,7 @@ type RUVVictimaLite struct {
 	Identificacion     string         `gorm:"size:20;not null" json:"identificacion"`
 	Caracterizacion    datatypes.JSON `gorm:"type:json;not null" json:"caracterizacion"`
 	Formacion          datatypes.JSON `gorm:"type:json;not null" json:"formacion"`
+	Etnia              string         `gorm:"type:json;not null" json:"etnia"`
 }
 
 // TableName sobrescribe el nombre de la tabla para evitar pluralización

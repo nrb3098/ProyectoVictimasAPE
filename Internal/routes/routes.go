@@ -10,6 +10,7 @@ import (
 func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 	metaController := controllers.MetaController{DB: db}
 	orientacionesController := controllers.OrientacionesController{DB: db}
+	archivoController := controllers.ArchivoController{DB: db}
 
 	api := router.Group("/api/v1")
 	{
@@ -28,6 +29,8 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 
 		//Ruta para crear el csv del reporte.
 		api.GET("/orientaciones/exportarOrientaciones", orientacionesController.ExportarOrientacionesCSV)
+		api.GET("/archivo/exportarInscritos", archivoController.ExportarInscritosCSV)
+		api.GET("/archivo/exportarColocadps", archivoController.ExportarColocadosCSV)
 
 		//Ruta para mover los datos desde la APE(usa ORACLE, no usar).
 		api.GET("/orientaciones/ejecucionMeta", orientacionesController.MoverDatosApeOrientaciones)
