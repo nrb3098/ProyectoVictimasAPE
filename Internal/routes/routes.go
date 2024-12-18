@@ -26,6 +26,7 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 		api.GET("/metas/ejecucionTrimestral", metaController.GetMetasxTrimestre) //Para notificaciones (solo orientaciones)
 		api.GET("/metas", metaController.GetMetas)                               //Entrega todas las metas para hacer el comparativo vs anual
 		api.GET("/metas/ejecucionMensualNotificacion", metaController.GetMetaxMes)
+		api.GET("/metas/ejecucionEtnia", metaController.GetMetaxEtnia)
 
 		//Ruta para crear el csv del reporte.
 		api.GET("/orientaciones/exportarOrientaciones", orientacionesController.ExportarOrientacionesCSV)
