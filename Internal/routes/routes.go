@@ -31,7 +31,7 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 		//Ruta para crear el csv del reporte.
 		api.GET("/orientaciones/exportarOrientaciones", orientacionesController.ExportarOrientacionesCSV)
 		api.GET("/archivo/exportarInscritos", archivoController.ExportarInscritosCSV)
-		api.GET("/archivo/exportarColocadps", archivoController.ExportarColocadosCSV)
+		api.GET("/archivo/exportarColocados", archivoController.ExportarColocadosCSV)
 
 		//Ruta para mover los datos desde la APE(usa ORACLE, no usar).
 		api.GET("/orientaciones/ejecucionMeta", orientacionesController.MoverDatosApeOrientaciones)
