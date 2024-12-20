@@ -209,5 +209,67 @@ func (mc *MetaController) GetMetasxTrimestre(c *gin.Context) {
 		return
 	}
 
+	if len(results) > 0 {
+		// Quedarse solo con el último registro
+		results = results[len(results)-1:]
+	}
+
+	c.JSON(http.StatusOK, results)
+}
+
+func (mc *MetaController) GetMetaxMes(c *gin.Context) {
+
+	var results []MonthlyCount
+	var result MonthlyCount
+
+	err := mc.DB.Table("Orientaciones").
+		Select("TO_CHAR(TO_DATE(fecha_primera_orientacion, 'YYYY-MM-DD'), 'YYYY-MM') AS year_month, COUNT(*) AS count").
+		Group("year_month").
+		Order("year_month").
+		Scan(&results).Error
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if len(results) > 0 {
+		// Quedarse solo con el último registro
+		result = results[len(results)-1]
+	}
+
+	c.JSON(http.StatusOK, result)
+}
+
+func (mc *MetaController) GetMetaxEtnia(c *gin.Context) {
+	// Estructura para almacenar los resultados
+	type Result struct {
+		Etnia string
+		Count int
+	}
+
+	var results []Result
+
+	// Consulta SQL cruda
+	query := `SELECT r.etnia, COUNT(o.id) AS count
+	FROM "Orientaciones" o
+	INNER JOIN "RUV_Victimas_LITE" r
+	ON o.tipo_identificacion = r.tipo_identificacion
+	AND o.identificacion = r.identificacion
+	GROUP BY r.etnia;`
+
+	// Consulta
+	err := mc.DB.Raw(query).Scan(&results).Error
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+
+	// Convertir resultados en un mapa
+	counts := make(map[string]int)
+	for _, result := range results {
+		counts[result.Etnia] = result.Count
+	}
+
 	c.JSON(http.StatusOK, results)
 }

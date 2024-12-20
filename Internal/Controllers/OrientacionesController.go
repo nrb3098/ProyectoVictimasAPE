@@ -321,11 +321,20 @@ func (oc *OrientacionesController) ExportarOrientacionesCSV(c *gin.Context) {
 
 	// Crear un archivo CSV
 	fileName := filepath.Join(directorio, fmt.Sprintf("orientaciones_%s.csv", time.Now().Format("20060102_150405")))
-	file, err := os.Create(fileName)
+
+	// Obtener la ruta absoluta del archivo
+	absolutePath, err := filepath.Abs(fileName)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "No se pudo obtener la ruta absoluta del archivo"})
+		return
+	}
+
+	file, err := os.Create(absolutePath)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "No se pudo crear el archivo CSV"})
 		return
 	}
+
 	defer file.Close()
 
 	writer := csv.NewWriter(file)
@@ -389,7 +398,7 @@ func (oc *OrientacionesController) ExportarOrientacionesCSV(c *gin.Context) {
 	}
 
 	var registroArchivo models.CSVRegistro
-	registroArchivo.RutaArchivo = fileName
+	registroArchivo.RutaArchivo = absolutePath
 	registroArchivo.TipoArchivo = "Orientados"
 	registroArchivo.FechaCreacion = time.Now()
 
@@ -400,6 +409,6 @@ func (oc *OrientacionesController) ExportarOrientacionesCSV(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Archivo CSV exportado exitosamente",
-		"file":    fileName,
+		"file":    absolutePath,
 	})
 }

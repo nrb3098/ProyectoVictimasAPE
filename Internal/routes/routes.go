@@ -1,16 +1,16 @@
 package routes
 
 import (
-	"database/sql"
 	controllers "proyectoAPE/Internal/Controllers"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-func RegisterRoutes(router *gin.Engine, db *gorm.DB, db_ape *sql.DB) {
-	metaController := controllers.MetaController{DB: db, DB_ape: db_ape}
-	orientacionesController := controllers.OrientacionesController{DB: db, DB_ape: db_ape}
+func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
+	metaController := controllers.MetaController{DB: db}
+	orientacionesController := controllers.OrientacionesController{DB: db}
+	archivoController := controllers.ArchivoController{DB: db}
 
 	api := router.Group("/api/v1")
 	{
@@ -25,10 +25,16 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB, db_ape *sql.DB) {
 		api.GET("/metas/ejecucionMensual", metaController.GetMetasxMes)          //Para notificaciones (solo orientaciones)
 		api.GET("/metas/ejecucionTrimestral", metaController.GetMetasxTrimestre) //Para notificaciones (solo orientaciones)
 		api.GET("/metas", metaController.GetMetas)                               //Entrega todas las metas para hacer el comparativo vs anual
+		api.GET("/metas/ejecucionMensualNotificacion", metaController.GetMetaxMes)
+		api.GET("/metas/ejecucionEtnia", metaController.GetMetaxEtnia)
 
-		//Ruta para mover los datos desde la APE.
-		api.GET("/orientaciones/ejecucionMeta", orientacionesController.MoverDatosApeOrientaciones)
 		//Ruta para crear el csv del reporte.
 		api.GET("/orientaciones/exportarOrientaciones", orientacionesController.ExportarOrientacionesCSV)
+		api.GET("/archivo/exportarInscritos", archivoController.ExportarInscritosCSV)
+		api.GET("/archivo/exportarColocados", archivoController.ExportarColocadosCSV)
+
+		//Ruta para mover los datos desde la APE(usa ORACLE, no usar).
+		api.GET("/orientaciones/ejecucionMeta", orientacionesController.MoverDatosApeOrientaciones)
+
 	}
 }
