@@ -11,6 +11,7 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 	metaController := controllers.MetaController{DB: db}
 	orientacionesController := controllers.OrientacionesController{DB: db}
 	archivoController := controllers.ArchivoController{DB: db}
+	ciudadanoController := controllers.CiudadanoController{DB: db}
 
 	api := router.Group("/api/v1")
 	{
@@ -27,6 +28,9 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 		api.GET("/metas", metaController.GetMetas)                               //Entrega todas las metas para hacer el comparativo vs anual
 		api.GET("/metas/ejecucionMensualNotificacion", metaController.GetMetaxMes)
 		api.GET("/metas/ejecucionEtnia", metaController.GetMetaxEtnia)
+
+		// endpoints para validar ciudadano
+		api.POST("/ciudadano/ValidarVictima", ciudadanoController.ValidarSiEsVictima)
 
 		//Ruta para crear el csv del reporte.
 		api.GET("/orientaciones/exportarOrientaciones", orientacionesController.ExportarOrientacionesCSV)
