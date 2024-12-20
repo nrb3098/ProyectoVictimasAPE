@@ -6,7 +6,6 @@ import (
 	models "proyectoAPE/Internal/Models"
 
 	"github.com/gin-gonic/gin"
-	_ "github.com/godror/godror"
 	"gorm.io/gorm"
 )
 
