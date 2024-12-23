@@ -2,7 +2,6 @@
 FROM golang:1.23.3 AS builder
 WORKDIR /app
 
-
 # Copiar el código fuente
 COPY . .
 
@@ -10,11 +9,14 @@ COPY . .
 COPY go.mod go.sum ./
 RUN go mod download
 
+# Construir la aplicación
+RUN go build -o main .
+
 # Instalar dependencias necesarias para correr la aplicación
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
-# Construir la aplicación
-RUN go build -o main ./cmd
+# Copiar el binario desde la etapa de construcción
+COPY --from=builder /app/main .
 
 # Configurar el puerto
 EXPOSE 8084
