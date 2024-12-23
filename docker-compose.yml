@@ -23,7 +23,7 @@ services:
   api-service:
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./dockerfile
     container_name: api-service
     ports:
       - "5010:5010"
