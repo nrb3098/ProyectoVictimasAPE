@@ -1,15 +1,14 @@
 # Build stage
-FROM golang:1.23.3 AS builder
+FROM golang:1.23.3-alpine AS builder
 WORKDIR /app
 
 RUN apk add --no-cache gcc musl-dev
 
-# Copiar y descargar dependencias
-COPY go.mod go.sum ./
-RUN go mod download
-
 # Copiar el código fuente
 COPY . .
+
+#Descargar dependencias
+RUN go mod download
 
 # Instalar dependencias necesarias para correr la aplicación
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
