@@ -2,7 +2,7 @@ version: "3.9"
 services:
   postgres:
     image: postgres:16
-    container_name: postgres_ruv
+    container_name: postgres_ape
     environment:
       POSTGRES_DB: ruv_db
       POSTGRES_USER: ruv_user
