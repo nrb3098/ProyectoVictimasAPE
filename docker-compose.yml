@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: ruv_user
       POSTGRES_PASSWORD: ruv_password
     ports:
-      - "5432:5432"
+      - "5433:5433"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./tablas_generales_v1.sql:/docker-entrypoint-initdb.d/tablas_generales_v1.sql
