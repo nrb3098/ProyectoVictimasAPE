@@ -2,6 +2,7 @@
 FROM golang:1.23.3 AS builder
 WORKDIR /app
 
+RUN apk add --no-cache gcc musl-dev
 
 # Copiar y descargar dependencias
 COPY go.mod go.sum ./
