@@ -1,22 +1,37 @@
-# Build stage
-FROM golang:1.23.3-alpine AS builder
+# Base image para construcción y ejecución
+FROM debian:bookworm AS base
 WORKDIR /app
 
-RUN apk add --no-cache gcc musl-dev
+# Instalar herramientas necesarias
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    wget \
+    ca-certificates \
+    golang-1.23.3 && \
+    rm -rf /var/lib/apt/lists/*
+
+# Etapa de construcción
+FROM base AS builder
+WORKDIR /app
+
+# Copiar y descargar dependencias
+COPY go.mod go.sum ./
+RUN go mod download
 
 # Copiar el código fuente
 COPY . .
 
-#Descargar dependencias
-RUN go mod download
-
-# Instalar dependencias necesarias para correr la aplicación
-RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
-
-# Compilar la aplicación
+# Compilar el binario
 RUN go build -o main .
 
-# Configurar el puerto
+# Etapa final: ejecución
+FROM base AS runner
+WORKDIR /app
+
+# Copiar el binario compilado
+COPY --from=builder /app/main .
+
+# Exponer el puerto
 EXPOSE 8084
 
 # Comando de inicio
