@@ -9,11 +9,12 @@ COPY . .
 COPY go.mod go.sum ./
 RUN go mod download
 
+# Instalar dependencias necesarias para correr la aplicación
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+
 # Construir la aplicación
 RUN go build -o main .
 
-# Instalar dependencias necesarias para correr la aplicación
-RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
 # Copiar el binario desde la etapa de construcción
 COPY --from=builder /app/main .
