@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/
 COPY --from=builder /app/main .
 
 # Configurar el puerto
-EXPOSE 5010
+EXPOSE 8084
 
 # Comando de inicio
-CMD ["go run ."]
+CMD ["./main"]
