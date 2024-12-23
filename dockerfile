@@ -26,4 +26,4 @@ COPY --from=builder /app/main .
 EXPOSE 5010
 
 # Comando de inicio
-CMD ["./main"]
+CMD ["go run ."]
