@@ -13,7 +13,6 @@ COPY . .
 RUN go build -o main .
 
 # Final stage
-FROM debian:bullseye-slim
 WORKDIR /app
 
 # Instalar dependencias necesarias para correr la aplicación
