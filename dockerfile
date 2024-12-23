@@ -2,8 +2,6 @@
 FROM golang:1.23.3 AS builder
 WORKDIR /app
 
-# Instalar dependencias del sistema
-RUN apk add --no-cache gcc musl-dev
 
 # Copiar el código fuente
 COPY . .
@@ -12,6 +10,8 @@ COPY . .
 COPY go.mod go.sum ./
 RUN go mod download
 
+# Instalar dependencias necesarias para correr la aplicación
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
 # Construir la aplicación
 RUN go build -o main ./cmd
