@@ -12,9 +12,6 @@ COPY . .
 # Construir la aplicación
 RUN go build -o main .
 
-# Final stage
-WORKDIR /app
-
 # Instalar dependencias necesarias para correr la aplicación
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
