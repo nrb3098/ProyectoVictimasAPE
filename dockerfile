@@ -10,12 +10,12 @@ RUN go mod download
 # Copiar el código fuente
 COPY . .
 
-# Construir un binario estático
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
-
 # Final stage
-FROM scratch
+FROM debian:bookworm-slim
 WORKDIR /app
+
+# Instalar dependencias necesarias para correr la aplicación
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
 # Copiar el binario desde la etapa de construcción
 COPY --from=builder /app/main .
