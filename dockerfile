@@ -13,8 +13,8 @@ COPY . .
 # Instalar dependencias necesarias para correr la aplicación
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
-# Copiar el binario desde la etapa de construcción
-COPY --from=builder /app/main .
+# Compilar la aplicación
+RUN go build -o main .
 
 # Configurar el puerto
 EXPOSE 8084
