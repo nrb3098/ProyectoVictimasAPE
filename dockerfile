@@ -10,10 +10,6 @@ RUN go mod download
 # Copiar el código fuente
 COPY . .
 
-# Final stage
-FROM debian:bookworm-slim
-WORKDIR /app
-
 # Instalar dependencias necesarias para correr la aplicación
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
