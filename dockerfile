@@ -1,20 +1,33 @@
-FROM golang:1.23.3-alpine
-
+# Base image para construcción y ejecución
+FROM ubuntu:22.04 AS base
 WORKDIR /app
 
-# Instalar dependencias del sistema
-RUN apk add --no-cache gcc musl-dev
+# Instalar herramientas necesarias
+RUN apt-get update && apt-get install -y build-essential wget ca-certificates golang 1.23.3 && rm -rf /var/lib/apt/lists/*
 
-# Copiar todo el código fuente
-COPY . .
+# Etapa de construcción
+FROM base AS builder
+WORKDIR /app
 
-# Descargar dependencias
+# Copiar y descargar dependencias
+COPY go.mod go.sum ./
 RUN go mod download
 
-# Compilar la aplicación
-RUN go build -o main ./cmd
+# Copiar el código fuente
+COPY . .
 
+# Compilar el binario
+RUN go build -o main .
 
+# Etapa final: ejecución
+FROM base AS runner
+WORKDIR /app
+
+# Copiar el binario compilado
+COPY --from=builder /app/main .
+
+# Exponer el puerto
 EXPOSE 8084
 
+# Comando de inicio
 CMD ["./main"]
