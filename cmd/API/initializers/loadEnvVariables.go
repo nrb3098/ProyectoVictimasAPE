@@ -2,13 +2,14 @@ package initializers
 
 import (
 	"log"
-
-	"github.com/joho/godotenv"
+	"os"
 )
 
+var dbHost string
+
 func LoadEnvVariables() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file" + err.Error())
+	dbHost = os.Getenv("DB_PASS_RAVAPE")
+	if dbHost == "" {
+		log.Fatal("Environment variable DB_HOST not set")
 	}
 }
