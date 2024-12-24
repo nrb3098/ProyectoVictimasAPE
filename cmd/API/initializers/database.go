@@ -16,6 +16,6 @@ func ConnectToDB() {
 	DB, err = gorm.Open(postgres.Open(dbHost), &gorm.Config{})
 
 	if err != nil {
-		log.Fatal("No se pudo conectar con base de datos" + dbHost)
+		log.Fatal("No se pudo conectar con base de datos" + err.Error())
 	}
 }

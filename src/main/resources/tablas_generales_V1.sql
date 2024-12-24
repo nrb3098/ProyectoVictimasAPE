@@ -8,13 +8,15 @@ END
 $$;
 
 -- Crear la base de datos si no existe
-CREATE DATABASE rav_ape_db1 WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'en_US.utf8';
+--CREATE DATABASE rav_ape_db1 WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'en_US.utf8';
 
 -- Asignar el propietario de la base de datos al usuario
 ALTER DATABASE rav_ape_db1 OWNER TO ravape_user;
 
 -- Conectar a la base de datos para asignar permisos
 \c rav_ape_db1
+
+\du
 
 -- Otorgar permisos al usuario
 GRANT CONNECT ON DATABASE rav_ape_db1 TO ravape_user;
@@ -751,7 +753,7 @@ ALTER TABLE ONLY public.csv_registros
 --
 
 ALTER TABLE ONLY public.meta
-    ADD CONSTRAINT meta_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT meta_pkey  PRIMARY KEY (id);
 
 
 --
