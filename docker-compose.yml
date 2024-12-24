@@ -23,6 +23,7 @@ services:
     build:
       context: .
       dockerfile: ./dockerfile
+      target: dev
     container_name: api-service
     ports:
       - "8084:8084"
