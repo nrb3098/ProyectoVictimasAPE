@@ -19,7 +19,7 @@ func main() {
 
 	// Configuración CORS
 	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowOrigins = []string{"http://localhost:5173"}
+	corsConfig.AllowOrigins = []string{"http://localhost:5173", "http://149.130.160.235"}
 	corsConfig.AllowMethods = []string{"GET", "POST"}
 	corsConfig.AllowHeaders = []string{"Origin", "Content-Type", "Authorization"}
 	corsConfig.ExposeHeaders = []string{"Content-Length"}
